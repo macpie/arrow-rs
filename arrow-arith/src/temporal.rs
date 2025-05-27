@@ -93,7 +93,7 @@ where
     T: ChronoDateExt + Datelike + Timelike,
 {
     match part {
-        DatePart::Quarter => |d| d.quarter() as i32,
+        DatePart::Quarter => |d| ChronoDateExt::quarter(&d) as i32,
         DatePart::Year => |d| d.year(),
         DatePart::YearISO => |d| d.iso_week().year(),
         DatePart::Month => |d| d.month() as i32,
@@ -673,6 +673,9 @@ trait ChronoDateExt {
 
     /// Returns the day of week; Sunday is encoded as `0`, Monday as `1`, etc.
     fn num_days_from_sunday(&self) -> i32;
+
+    /// Returns the quarter of the year, in range 1..=4
+    fn quarter(&self) -> u32;
 }
 
 impl<T: Datelike> ChronoDateExt for T {
@@ -682,6 +685,10 @@ impl<T: Datelike> ChronoDateExt for T {
 
     fn num_days_from_sunday(&self) -> i32 {
         self.weekday().num_days_from_sunday() as i32
+    }
+
+    fn quarter(&self) -> u32 {
+        (self.month() - 1) / 3 + 1
     }
 }
 
